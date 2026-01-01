@@ -1,27 +1,27 @@
 exports.handler = async function (event, context) {
-  // Chỉ chấp nhận method POST
+  // 1. Chỉ nhận lệnh POST
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
   try {
     const body = JSON.parse(event.body);
-    const userMessage = body.message || "Xin chào";
+    const userMessage = body.message || "Hello";
 
-    // Lấy API Key
+    // 2. Lấy chìa khóa
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Thiếu API Key trên Netlify" }),
+        body: JSON.stringify({ error: "Chưa nhập API Key trên Netlify" }),
       };
     }
 
-    // --- SỬA LỖI TẠI ĐÂY: Dùng model 'gemini-1.5-flash-latest' ---
-    // Đây là phiên bản ổn định nhất hiện nay
-    const modelName = "gemini-1.5-flash-latest";
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+    // 3. Cấu hình gọi Google AI (Dùng model chuẩn: gemini-1.5-flash)
+    // Lưu ý: Tôi đã viết thẳng tên model vào đây
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
+    // 4. Gọi API
     const response = await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -31,7 +31,7 @@ exports.handler = async function (event, context) {
             parts: [
               {
                 text:
-                  "Bạn là trợ lý ảo K12A1. Hãy trả lời ngắn gọn: " +
+                  "Bạn là trợ lý ảo của nhóm K12A1. Hãy trả lời ngắn gọn câu hỏi: " +
                   userMessage,
               },
             ],
@@ -42,12 +42,14 @@ exports.handler = async function (event, context) {
 
     const data = await response.json();
 
-    // Kiểm tra nếu Google báo lỗi
+    // 5. Kiểm tra lỗi từ Google (nếu có)
     if (data.error) {
-      console.log("Lỗi từ Google:", data.error);
-      return { statusCode: 400, body: JSON.stringify(data) }; // Trả về lỗi gốc để dễ debug
+      console.log("Lỗi Google:", data.error);
+      // Trả về lỗi chi tiết để bạn dễ sửa
+      return { statusCode: 400, body: JSON.stringify(data) };
     }
 
+    // 6. Thành công
     return {
       statusCode: 200,
       body: JSON.stringify(data),
@@ -56,7 +58,7 @@ exports.handler = async function (event, context) {
     console.error("Lỗi Server:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Lỗi Server: " + error.message }),
+      body: JSON.stringify({ error: error.message }),
     };
   }
 };
