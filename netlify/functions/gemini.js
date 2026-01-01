@@ -1,5 +1,5 @@
 // netlify/functions/gemini.js
-exports.handler = async function(event, context) {
+exports.handler = async function (event, context) {
   // Chỉ chấp nhận method POST
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
@@ -12,7 +12,7 @@ exports.handler = async function(event, context) {
 
     // Lấy API Key từ biến môi trường Netlify (đã cài ở Bước 1)
     const apiKey = process.env.GEMINI_API_KEY;
-    
+
     // Cấu hình URL gọi sang Google
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
 
@@ -25,10 +25,12 @@ exports.handler = async function(event, context) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{ 
-            parts: [{ text: systemInstruction + "\nCâu hỏi: " + userMessage }] 
-        }]
-      })
+        contents: [
+          {
+            parts: [{ text: systemInstruction + "\nCâu hỏi: " + userMessage }],
+          },
+        ],
+      }),
     });
 
     const data = await response.json();
@@ -36,13 +38,12 @@ exports.handler = async function(event, context) {
     // Trả kết quả về cho frontend
     return {
       statusCode: 200,
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     };
-
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Lỗi Server hoặc API Key" })
+      body: JSON.stringify({ error: "Lỗi Server hoặc API Key" }),
     };
   }
 };
