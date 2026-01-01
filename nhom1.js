@@ -120,14 +120,35 @@ chatToggle.addEventListener("click", () =>
 closeChat.addEventListener("click", () => chatWindow.classList.add("hidden"));
 
 // Hàm gọi Google Gemini API
+// Hàm gọi AI mới (An toàn hơn - Gọi qua Netlify)
 async function callGemini(message) {
-  const API_KEY = "YOUR_API_KEY_HERE"; // *** BẠN HÃY DÁN API KEY VÀO ĐÂY ***
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+    const API_URL = '/.netlify/functions/gemini'; // Gọi đến file gemini.js trong thư mục netlify
+    
+    // Hiển thị đang gõ (nếu cần xử lý giao diện thêm)
+    console.log("Đang gọi AI...");
 
-  // Tạo ngữ cảnh cho AI về nhóm K12A1
-  const context = `Bạn là trợ lý ảo của nhóm sinh viên K12A1 Đại học Nghệ An. 
-    Dữ liệu nhóm: ${JSON.stringify(membersData)}. 
-    Hãy trả lời ngắn gọn, thân thiện. Câu hỏi của người dùng là: ${message}`;
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                message: message // Gửi câu hỏi sang cho Netlify xử lý
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Kiểm tra kết quả trả về
+        if (data.candidates && data.candidates.length > 0) {
+            return data.candidates[0].content.parts[0].text;
+        } else {
+            return "AI đang suy nghĩ, bạn thử lại chút nhé.";
+        }
+    } catch (error) {
+        console.error("Lỗi:", error);
+        return "Lỗi kết nối server (Kiểm tra lại Netlify Function).";
+    }
+}
 
   try {
     const response = await fetch(API_URL, {
