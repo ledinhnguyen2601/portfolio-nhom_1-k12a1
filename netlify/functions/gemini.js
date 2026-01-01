@@ -5,18 +5,18 @@ exports.handler = async function (event, context) {
 
   try {
     const body = JSON.parse(event.body);
-    const userMessage = body.message || "Hello";
+    const userMessage = body.message || "Xin chào";
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Chưa nhập API Key" }),
+        body: JSON.stringify({ error: "Thiếu API Key" }),
       };
     }
 
-    // --- QUAY VỀ BẢN CŨ MÀ CHẮC: gemini-pro ---
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`;
+    // Dùng model chuẩn quốc tế: gemini-1.5-flash
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(apiUrl, {
       method: "POST",
@@ -25,7 +25,11 @@ exports.handler = async function (event, context) {
         contents: [
           {
             parts: [
-              { text: "Bạn là trợ lý ảo nhóm K12A1. Trả lời: " + userMessage },
+              {
+                text:
+                  "Bạn là trợ lý ảo K12A1 vui tính. Trả lời ngắn gọn: " +
+                  userMessage,
+              },
             ],
           },
         ],
