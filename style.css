@@ -1,23 +1,22 @@
 :root {
-  /* MÀU SẮC CHỦ ĐẠO: Gradient Tím - Xanh Dương */
+  /* MÀU SẮC CHỦ ĐẠO: Gradient Tím - Xanh Dương (Hiện đại) */
   --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --bg-light: #f3f4f6;
-  --text-dark: #1f2937;
-  --card-glass: rgba(255, 255, 255, 0.95);
-  --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+  --bg-light: #f8fafc; /* Màu nền sáng (trắng xanh nhẹ) */
+  --text-color: #1e293b; /* Màu chữ đen xám (dễ đọc) */
+  --glass-bg: rgba(255, 255, 255, 0.9); /* Hiệu ứng kính */
+  --shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.15);
 }
 
-/* DARK MODE */
+/* CHẾ ĐỘ TỐI (DARK MODE) - Tinh chỉnh cho dễ đọc */
 [data-theme="dark"] {
   --primary-gradient: linear-gradient(
     135deg,
-    #0f2027 0%,
-    #203a43 50%,
-    #2c5364 100%
-  );
-  --bg-light: #111827;
-  --text-dark: #f9fafb;
-  --card-glass: rgba(31, 41, 55, 0.8);
+    #0f172a 0%,
+    #1e293b 100%
+  ); /* Nền tối sâu hơn */
+  --bg-light: #0f172a;
+  --text-color: #f1f5f9; /* Màu chữ trắng sáng (High Contrast) */
+  --glass-bg: rgba(30, 41, 59, 0.95); /* Kính tối */
 }
 
 * {
@@ -31,15 +30,15 @@ body {
   background-color: var(--bg-light);
   background-image: var(--primary-gradient);
   background-attachment: fixed;
-  color: var(--text-dark);
+  color: var(--text-color);
   min-height: 100vh;
-  transition: all 0.5s ease;
+  transition: color 0.3s ease, background 0.3s ease;
 }
 
 /* --- NAVBAR --- */
 .navbar {
-  background: var(--card-glass);
-  backdrop-filter: blur(10px);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
   height: 70px;
   padding: 0 30px;
   display: flex;
@@ -48,56 +47,62 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logo {
   font-size: 1.5rem;
   font-weight: 800;
-  background: var(--primary-gradient);
+  background: linear-gradient(to right, #667eea, #764ba2);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; /* Chữ Gradient */
+  cursor: pointer;
+}
+/* Fix lỗi chữ logo bị chìm khi Dark mode */
+[data-theme="dark"] .logo {
+  background: linear-gradient(to right, #60a5fa, #a78bfa);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  cursor: pointer;
 }
 
 .nav-members {
   display: flex;
-  gap: 10px;
+  gap: 15px;
 }
 
 .nav-avatar {
-  width: 45px;
-  height: 45px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
-  border: 3px solid transparent;
-  background: linear-gradient(white, white) padding-box,
-    var(--primary-gradient) border-box;
-  cursor: pointer;
-  transition: transform 0.3s;
+  border: 2px solid rgba(255, 255, 255, 0.8);
   object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.2s;
+  background-color: #ddd; /* Màu nền chờ khi chưa có ảnh */
 }
 .nav-avatar:hover {
-  transform: translateY(-3px) scale(1.1);
+  transform: scale(1.15);
+  border-color: #764ba2;
 }
 
 .nav-controls button {
   background: none;
   border: none;
-  font-size: 1.4rem;
+  font-size: 1.3rem;
   margin-left: 15px;
   cursor: pointer;
-  color: #555;
-  transition: color 0.3s;
-}
-[data-theme="dark"] .nav-controls button {
-  color: #ddd;
+  color: var(--text-color);
+  opacity: 0.8;
 }
 .nav-controls button:hover {
-  color: #764ba2;
+  opacity: 1;
+  transform: rotate(15deg);
 }
 
-/* --- CONTAINER & CARD --- */
+/* --- HERO SECTION --- */
 .container {
   padding: 40px 20px;
   display: flex;
@@ -105,177 +110,214 @@ body {
   align-items: flex-start;
   min-height: calc(100vh - 70px);
 }
-
 .hidden {
   display: none !important;
 }
 .active {
   display: block;
-  animation: zoomIn 0.4s ease-out;
+  animation: fadeInUp 0.5s ease-out;
 }
 
-@keyframes zoomIn {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
 
-/* HERO SECTION */
 #hero-section {
   text-align: center;
   color: white;
-  margin-top: 100px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  margin-top: 80px;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 #hero-section h1 {
-  font-size: 3rem;
-  margin-bottom: 20px;
+  font-size: 3.5rem;
+  margin-bottom: 15px;
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 #hero-section p {
   font-size: 1.2rem;
   opacity: 0.9;
+  font-weight: 300;
 }
 
-/* PROFILE DETAIL CARD */
+/* --- PROFILE CARD --- */
 .profile-card {
-  background: var(--card-glass);
+  background: var(--glass-bg);
   width: 100%;
-  max-width: 800px;
-  border-radius: 20px;
+  max-width: 850px;
+  border-radius: 24px;
   padding: 40px;
   box-shadow: var(--shadow);
   position: relative;
-  backdrop-filter: blur(15px);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .profile-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 30px;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
 }
 .profile-left {
   text-align: center;
-  border-right: 1px solid rgba(0, 0, 0, 0.1);
-  padding-right: 20px;
+  border-right: 1px solid rgba(100, 100, 100, 0.1);
+  padding-right: 30px;
 }
 .profile-right {
   text-align: left;
 }
 
 .big-avatar {
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid white;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  margin-bottom: 15px;
+  border: 4px solid white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  margin-bottom: 20px;
+  background-color: #eee;
 }
 
-/* ĐOẠN BẠN GỬI BẮT ĐẦU TỪ ĐÂY (Đã được ghép chuẩn) */
 .role-badge {
-  background: var(--primary-gradient);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
   display: inline-block;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .info-section {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 .info-section h4 {
   color: #764ba2;
-  margin-bottom: 5px;
-  border-bottom: 2px solid #e5e7eb;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  border-bottom: 2px solid rgba(118, 75, 162, 0.2);
   display: inline-block;
-  padding-bottom: 2px;
+  padding-bottom: 4px;
 }
 [data-theme="dark"] .info-section h4 {
   color: #a78bfa;
-  border-color: #374151;
+  border-color: rgba(167, 139, 250, 0.3);
 }
 
 .back-btn {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  background: none;
+  top: 25px;
+  right: 25px;
+  background: rgba(0, 0, 0, 0.05);
   border: none;
-  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   cursor: pointer;
-  color: #888;
-  transition: color 0.3s;
+  color: var(--text-color);
+  font-size: 1.2rem;
+  transition: all 0.2s;
 }
 .back-btn:hover {
-  color: #d32f2f;
+  background: #fee2e2;
+  color: #ef4444;
 }
 
-/* CHATBOT */
+/* --- CHATBOT (FIX LỖI MÀU CHỮ) --- */
 .chat-window {
   position: fixed;
-  bottom: 80px;
+  bottom: 30px;
   right: 30px;
-  width: 350px;
+  width: 360px;
   height: 500px;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+  background: white; /* Nền chat luôn là trắng để dễ đọc */
+  border-radius: 18px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  z-index: 999;
+  z-index: 1000;
+  overflow: hidden;
 }
+
 .chat-header {
-  background: var(--primary-gradient);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 15px;
-  border-radius: 15px 15px 0 0;
+  padding: 15px 20px;
+  font-weight: 600;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
+
 .chat-content {
   flex: 1;
   padding: 15px;
   overflow-y: auto;
-  background: #f9f9f9;
+  background: #f8f9fa; /* Nền nội dung chat sáng */
 }
+
+/* QUAN TRỌNG: Ép màu chữ trong tin nhắn luôn là màu ĐEN để đọc được trên nền sáng */
+.chat-content div {
+  color: #333 !important; /* Luôn màu đen */
+  font-size: 0.95rem;
+  line-height: 1.5;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
 .chat-input-area {
-  display: flex;
-  padding: 10px;
+  padding: 15px;
   border-top: 1px solid #eee;
+  background: white;
+  display: flex;
+  gap: 10px;
 }
 .chat-input-area input {
   flex: 1;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 20px;
+  padding: 10px 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 25px;
   outline: none;
+  background: #f8fafc;
+  color: #333;
 }
 .chat-input-area button {
-  margin-left: 10px;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: var(--primary-gradient);
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
   .profile-grid {
     grid-template-columns: 1fr;
   }
   .profile-left {
     border-right: none;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 25px;
+  }
+  .big-avatar {
+    width: 140px;
+    height: 140px;
+  }
+  .chat-window {
+    width: 90%;
+    right: 5%;
+    bottom: 20px;
   }
 }
