@@ -12,12 +12,18 @@ exports.handler = async function (event, context) {
   try {
     const body = JSON.parse(event.body);
     const userMessage = body.message || "Hello";
+
+    // Lấy Key từ Netlify
     const apiKey = process.env.GEMINI_API_KEY;
 
-    if (!apiKey) throw new Error("Thieu API Key");
+    if (!apiKey) {
+      throw new Error(
+        "Chưa có API Key. Cụ nhớ thêm vào Environment Variables trên Netlify nhé!"
+      );
+    }
 
-    // Đổi sang bản 1.0-pro
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${apiKey}`;
+    // --- CẬP NHẬT MỚI NHẤT 2026: Dùng bản 2.5 Flash ---
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(apiUrl, {
       method: "POST",
@@ -28,7 +34,8 @@ exports.handler = async function (event, context) {
             parts: [
               {
                 text:
-                  "Bạn là trợ lý ảo K12A1. Trả lời ngắn gọn: " + userMessage,
+                  "Bạn là trợ lý ảo K12A1. Trả lời ngắn gọn, thân thiện: " +
+                  userMessage,
               },
             ],
           },
@@ -38,6 +45,7 @@ exports.handler = async function (event, context) {
 
     const data = await response.json();
 
+    // Kiểm tra xem Google có báo lỗi không
     if (data.error) {
       throw new Error(data.error.message);
     }
@@ -48,6 +56,7 @@ exports.handler = async function (event, context) {
       body: JSON.stringify(data),
     };
   } catch (error) {
+    console.error("Lỗi:", error.message); // Ghi log để dễ check
     return {
       statusCode: 500,
       headers,
