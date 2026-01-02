@@ -6,11 +6,7 @@ exports.handler = async function (event, context) {
   };
 
   if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers,
-      body: "",
-    };
+    return { statusCode: 200, headers, body: "" };
   }
 
   try {
@@ -18,11 +14,9 @@ exports.handler = async function (event, context) {
     const userMessage = body.message || "Hello";
     const apiKey = process.env.GEMINI_API_KEY;
 
-    if (!apiKey) {
-      throw new Error("Chưa cấu hình GEMINI_API_KEY trong Netlify");
-    }
+    if (!apiKey) throw new Error("Thieu API Key");
 
-    // --- SỬA LỖI Ở ĐÂY: Đổi 'gemini-pro' thành 'gemini-1.5-flash' ---
+    // Dùng bản 1.5 flash
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     const response = await fetch(apiUrl, {
@@ -43,6 +37,11 @@ exports.handler = async function (event, context) {
     });
 
     const data = await response.json();
+
+    // Kiểm tra nếu Google báo lỗi trong data trả về
+    if (data.error) {
+      throw new Error(data.error.message);
+    }
 
     return {
       statusCode: 200,
