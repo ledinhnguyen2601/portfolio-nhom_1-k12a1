@@ -13,11 +13,13 @@ exports.handler = async function (event, context) {
     const body = JSON.parse(event.body);
     const userMessage = body.message || "Hello";
 
-    // --- KEY CỦA CỤ ĐÂY (Mình lấy từ ảnh cụ gửi) ---
+    // --- KEY CỦA CỤ (Giữ nguyên cái cũ) ---
     const apiKey = "AIzaSyDcvVTo0pGD2411hybEdTpaJRJdqZqQI9g";
 
-    // Cấu hình gọi Google (Gemini 1.5 Flash)
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // --- SỬA Ở ĐÂY: Đổi sang 'gemini-pro' cho dễ nhận Key ---
+    const model = "gemini-pro";
+
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const response = await fetch(apiUrl, {
       method: "POST",
@@ -28,8 +30,7 @@ exports.handler = async function (event, context) {
             parts: [
               {
                 text:
-                  "Bạn là trợ lý ảo NHOM 1 K12A1. Trả lời ngắn gọn: " +
-                  userMessage,
+                  "Bạn là trợ lý ảo K12A1. Trả lời ngắn gọn: " + userMessage,
               },
             ],
           },
@@ -50,7 +51,7 @@ exports.handler = async function (event, context) {
     };
   } catch (error) {
     return {
-      statusCode: 500, // Trả lỗi về để cụ biết nếu có
+      statusCode: 500,
       headers,
       body: JSON.stringify({ error: error.message }),
     };
