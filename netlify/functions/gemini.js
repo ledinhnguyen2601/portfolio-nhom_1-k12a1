@@ -12,45 +12,66 @@ exports.handler = async function (event, context) {
   try {
     const body = JSON.parse(event.body);
     const userMessage = body.message || "Hello";
-
-    // Lấy Key
     const apiKey = process.env.GEMINI_API_KEY;
+
     if (!apiKey) throw new Error("Thieu API Key");
 
-    // --- DÙNG BẢN 1.5 FLASH (Bản ổn định nhất) ---
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // Danh sách các model để thử lần lượt (Cái này tạch thì tự nhảy sang cái kia)
+    const modelsToTry = [
+      "gemini-1.5-flash",
+      "gemini-1.5-flash-001",
+      "gemini-1.5-pro",
+      "gemini-pro",
+      "gemini-1.0-pro",
+    ];
 
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text:
-                  "Bạn là trợ lý ảo K12A1. Trả lời ngắn gọn: " + userMessage,
-              },
-            ],
-          },
-        ],
-      }),
-    });
+    let lastError = null;
 
-    const data = await response.json();
+    // Vòng lặp thử từng model
+    for (const model of modelsToTry) {
+      console.log(`Dang thu model: ${model}...`); // Ghi log để theo dõi
 
-    if (data.error) {
-      // In lỗi chi tiết ra để dễ sửa nếu lại tạch
-      console.log("Lỗi Google:", JSON.stringify(data.error));
-      throw new Error(data.error.message);
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text:
+                    "Bạn là trợ lý ảo K12A1. Trả lời ngắn gọn: " + userMessage,
+                },
+              ],
+            },
+          ],
+        }),
+      });
+
+      const data = await response.json();
+
+      // Nếu thành công (không có lỗi) -> Trả về ngay
+      if (!data.error) {
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify(data),
+        };
+      }
+
+      // Nếu lỗi -> Lưu lỗi lại và thử model tiếp theo
+      console.log(`Model ${model} bi loi: ${data.error.message}`);
+      lastError = data.error.message;
     }
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify(data),
-    };
+    // Nếu thử hết danh sách mà vẫn lỗi
+    throw new Error(
+      `Da thu tat ca model deu that bai. Loi cuoi cung: ${lastError}`
+    );
   } catch (error) {
+    console.error("Loi Server:", error.message);
     return {
       statusCode: 500,
       headers,
