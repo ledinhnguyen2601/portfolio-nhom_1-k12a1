@@ -11,7 +11,7 @@ exports.handler = async function (event, context) {
 
   try {
     // --- DÁN KEY CỦA CỤ VÀO ĐÂY ---
-    const apiKey = "AIzaSyDcvVTo0pGD2411hybEdTpaJRjdqZqQI9g";
+    const apiKey = "AIzaSyDcvVTo0pGD2411hybEdTpaJRJdqZqQI9g";
 
     // Thay vì chat, mình gọi hàm lấy danh sách Model
     console.log("Dang kiem tra danh sach model...");
