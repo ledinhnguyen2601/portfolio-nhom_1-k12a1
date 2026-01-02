@@ -16,8 +16,8 @@ exports.handler = async function (event, context) {
 
     if (!apiKey) throw new Error("Thieu API Key");
 
-    // Dùng bản 1.5 flash
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // Đổi sang bản 1.0-pro
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro:generateContent?key=${apiKey}`;
 
     const response = await fetch(apiUrl, {
       method: "POST",
@@ -38,7 +38,6 @@ exports.handler = async function (event, context) {
 
     const data = await response.json();
 
-    // Kiểm tra nếu Google báo lỗi trong data trả về
     if (data.error) {
       throw new Error(data.error.message);
     }
